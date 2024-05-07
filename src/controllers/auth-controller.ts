@@ -26,7 +26,7 @@ export const signup = async (req:Request, res:Response, next:NextFunction) => {
     }
 }
 
-const checkExistingUser = async (userName:string) => {
+export const checkExistingUser = async (userName:string) => {
     try{
         const sql = 'SELECT * FROM Users WHERE UserName=? AND IsActive=1';
         const [users] = await pool.query<User[]>(sql,[userName]);

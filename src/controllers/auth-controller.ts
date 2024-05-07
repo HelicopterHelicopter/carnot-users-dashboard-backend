@@ -8,6 +8,49 @@ import { ResultSetHeader } from "mysql2";
 
 export const login = async (req:Request,res:Response,next:NextFunction) => {
 
+    try{
+
+        const {userName,password} = req.body;
+
+        const checkIfUserExistQuery = 'SELECT * FROM Users WHERE UserName=? AND IsActive=1';
+        const [users] = await pool.query<User[]>(checkIfUserExistQuery,[userName]);
+        if(!users.length){
+            return res.status(401).json({message:"User not registered"});
+        }
+
+        const user = users[0];
+
+        const isPasswordCorrect = await compare(password,user.Password);
+
+        if(!isPasswordCorrect){
+            return res.status(403).json({message:"Incorrect password"});
+        }
+
+        res.clearCookie(COOKIE_NAME,{
+            httpOnly:true,
+            signed:true,
+            domain:"localhost",
+            path:"/"
+        });
+
+        const token = createToken(user.Id,"7d");
+        const expires = new Date();
+        expires.setDate(expires.getDate()+7);
+
+        res.cookie(COOKIE_NAME,token,{
+            path:"/",
+            domain:"localhost",
+            expires,
+            httpOnly:true,
+            signed:true
+        });
+
+        return res.status(200).json({message:"OK",username:user.UserName});
+    }catch(e){
+        console.log(e);
+        return res.status(200).json({message:"ERROR",cause:e.message});
+    }
+
 }
 
 export const signup = async (req:Request, res:Response, next:NextFunction) => {

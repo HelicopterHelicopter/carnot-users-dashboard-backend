@@ -2,6 +2,9 @@ import { Request,Response,NextFunction } from "express";
 import {hash,compare} from 'bcrypt';
 import { pool } from "../db/connect";
 import User from "../models/User";
+import { COOKIE_NAME } from "../utils/constants";
+import { createToken } from "../utils/token-manager";
+import { ResultSetHeader } from "mysql2";
 
 export const login = async (req:Request,res:Response,next:NextFunction) => {
 
@@ -18,7 +21,30 @@ export const signup = async (req:Request, res:Response, next:NextFunction) => {
         const hashedPassword = await hash(password,10);
 
         const sql = 'INSERT INTO Users (UserName,Password,IsActive,CreatedBy,CreatedAt) VALUES (?,?,?,?,NOW())';
-        await pool.query(sql,[userName,hashedPassword,1,userName]);
+        const [results] = await pool.query<ResultSetHeader>(sql,[userName,hashedPassword,1,userName]);
+
+        const userId = results.insertId;
+
+        res.clearCookie(COOKIE_NAME,{
+            httpOnly:true,
+            signed:true,
+            domain:"localhost",
+            path:"/"
+        });
+
+        const token = createToken(userId,"7d");
+        console.log(token);
+        const expires = new Date();
+        expires.setDate(expires.getDate()+7);
+
+        res.cookie(COOKIE_NAME,token,{
+            path:"/",
+            httpOnly:true,
+            signed:true,
+            domain:"localhost",
+            expires
+        });
+
 
         return res.status(201).json({message:"User Created Successfully"});
     }catch(e){

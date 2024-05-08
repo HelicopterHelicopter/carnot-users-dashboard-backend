@@ -55,7 +55,7 @@ export const login = async (req:Request,res:Response,next:NextFunction) => {
 
 export const signup = async (req:Request, res:Response, next:NextFunction) => {
     try{
-        const {userName,password} = req.body;   
+        const {userName,email,password} = req.body;   
 
         if(!await checkExistingUser(userName)){
             return res.status(401).json({message:"User already exists with the given Username."});
@@ -63,8 +63,8 @@ export const signup = async (req:Request, res:Response, next:NextFunction) => {
 
         const hashedPassword = await hash(password,10);
 
-        const sql = 'INSERT INTO Users (UserName,Password,IsActive,CreatedBy,CreatedAt) VALUES (?,?,?,?,NOW())';
-        const [results] = await pool.query<ResultSetHeader>(sql,[userName,hashedPassword,1,userName]);
+        const sql = 'INSERT INTO Users (UserName,Password,Email,IsActive,CreatedBy,CreatedAt) VALUES (?,?,?,?,?,NOW())';
+        const [results] = await pool.query<ResultSetHeader>(sql,[userName,hashedPassword,email,1,userName]);
 
         const userId = results.insertId;
 
@@ -76,7 +76,6 @@ export const signup = async (req:Request, res:Response, next:NextFunction) => {
         });
 
         const token = createToken(userId,"7d");
-        console.log(token);
         const expires = new Date();
         expires.setDate(expires.getDate()+7);
 

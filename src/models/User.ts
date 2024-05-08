@@ -14,7 +14,8 @@ interface User extends RowDataPacket{
     CreatedBy:string,
     CreatedAt:Date,
     UpdatedBy:string,
-    UpdatedAt:Date
+    UpdatedAt:Date,
+    Email:string
 };
 
 export default User;

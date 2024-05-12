@@ -15,6 +15,19 @@ interface UserDTO extends RowDataPacket {
     ProfilePicUrl:string|null
 }
 
+export const getHomePageInsights = async (req:Request, res:Response,next:NextFunction) => {
+    try{
+        const [allUsers] = await pool.query("SELECT COUNT(Id) As TotalCount FROM Users");
+        const [activeUsers] = await pool.query("SELECT COUNT(Id) As ActiveUsers FROM Users WHERE IsActive=1");
+        const [profileCompleted] = await pool.query("SELECT COUNT(Id) As CompletedUsers FROM Users WHERE Name IS NOT NULL AND DOB IS NOT NULL AND Gender IS NOT NULL AND MobileNo IS NOT NULL AND Address IS NOT NULL AND ProfilePicUrl IS NOT NULL AND IsActive=1");
+
+        return res.status(200).json({message:"OK",insights:{totalUsers:allUsers[0].TotalCount,activeUsers:activeUsers[0].ActiveUsers,profileCompletedUsers:profileCompleted[0].CompletedUsers}});
+    }catch(e){
+        console.log(e);
+        return res.status(200).json({message:"ERROR",cause:e.message});
+    }
+}
+
 export const getAllUsersData = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const pageNo = Number(req.query.pageNo)||1;
@@ -44,7 +57,7 @@ export const updateProfile = async (req:Request,res:Response,next:NextFunction) 
         if(userId && userId>0){
             const sql = 'UPDATE Users SET Name=?,DOB=?,MobileNo=?,Address=?,Gender=? WHERE Id=?';
             const [results] = await pool.query(sql,[name,dob,mobileNo,address,gender,userId]);
-            return res.status(200).json({message:"OK"});
+            return res.status(200).json({message:"OK",updatedDetails:{name:name,dob:dob,mobileNo:mobileNo,address:address,gender:gender}});
         }
         return res.status(401).json({message:"ERROR",cause:"Invalid user"});
     }catch(e){  

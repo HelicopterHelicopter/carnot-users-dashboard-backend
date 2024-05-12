@@ -20,7 +20,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         const checkIfUserExistQuery = 'SELECT * FROM Users WHERE UserName=? AND IsActive=1';
         const [users] = await pool.query<User[]>(checkIfUserExistQuery, [userName]);
         if (!users.length) {
-            return res.status(401).json({ message: "User not registered" });
+            return res.status(200).json({ message: "User not registered" });
         }
 
         const user = users[0];
@@ -28,7 +28,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         const isPasswordCorrect = await compare(password, user.Password);
 
         if (!isPasswordCorrect) {
-            return res.status(403).json({ message: "Incorrect password" });
+            return res.status(200).json({ message: "Incorrect password" });
         }
 
         res.clearCookie(COOKIE_NAME, {
@@ -50,7 +50,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             signed: true
         });
 
-        return res.status(200).json({ message: "OK", userDetails: { username: user.UserName, name: user.Name, dob: user.DOB, profilePic: user.ProfilePicUrl ?? process.env.DEFAULT_PROFILEPIC_URL, mobileNo: user.MobileNo, address: user.Address } });
+        return res.status(200).json({ message: "OK", userDetails: { username: user.UserName, name: user.Name, dob: user.DOB, profilePic: user.ProfilePicUrl ?? process.env.DEFAULT_PROFILEPIC_URL, mobileNo: user.MobileNo, address: user.Address,email:user.Email } });
     } catch (e) {
         console.log(e);
         return res.status(200).json({ message: "ERROR", cause: e.message });
@@ -63,7 +63,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
         const { userName, email, password } = req.body;
 
         if (!await checkExistingUser(userName)) {
-            return res.status(401).json({ message: "User already exists with the given Username." });
+            return res.status(200).json({ message: "User already exists with the given Username." });
         }
 
         const hashedPassword = await hash(password, 10);
@@ -93,7 +93,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
         });
 
 
-        return res.status(201).json({ message: "User Created Successfully" });
+        return res.status(201).json({ message: "OK",userDetails:{username:userName,name:null,dob:null,profilePic:process.env.DEFAULT_PROFILEPIC_URL,mobileNo: null, address: null,email:email} });
     } catch (e) {
         return res.status(200).json({ message: "ERROR", cause: e.message });
     }
@@ -166,7 +166,7 @@ export const google = async (req: Request, res: Response, next: NextFunction) =>
                 signed: true
             });
 
-            return res.status(200).json({ message: "OK", userDetails: { username: user.UserName, name: user.Name, dob: user.DOB, profilePic: user.ProfilePicUrl ?? process.env.DEFAULT_PROFILEPIC_URL, mobileNo: user.MobileNo, address: user.Address } });
+            return res.status(200).json({ message: "OK", userDetails: { username: user.UserName, name: user.Name, dob: user.DOB, gender:user.Gender,profilePic: user.ProfilePicUrl ?? process.env.DEFAULT_PROFILEPIC_URL, mobileNo: user.MobileNo, address: user.Address,email:user.Email } });
 
         } else {
             const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
@@ -197,7 +197,7 @@ export const google = async (req: Request, res: Response, next: NextFunction) =>
                 expires
             });
 
-            return res.status(200).json({ message: "OK" , userDetails: { username: generatedUsername, name: verify.name, dob: "", profilePic: verify.pictuire ?? process.env.DEFAULT_PROFILEPIC_URL, mobileNo: "", address: "" }});
+            return res.status(200).json({ message: "OK" , userDetails: { username: generatedUsername, name: verify.name, dob: "", profilePic: verify.pictuire ?? process.env.DEFAULT_PROFILEPIC_URL, mobileNo: null, address: null,email:verify.email,gender:null }});
         }
     } catch (e) {
         console.log(e);

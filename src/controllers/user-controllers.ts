@@ -18,9 +18,10 @@ interface UserDTO extends RowDataPacket {
 export const getAllUsersData = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const pageNo = Number(req.query.pageNo)||1;
+        const searchQuery = req.query.search || "";
         const offset = (pageNo-1) * 10;
-        const [users] = await pool.query<UserDTO[]>(`SELECT Id,UserName,Name,DOB,Gender,MobileNo,Address,ProfilePicUrl FROM Users WHERE IsActive=1 ORDER BY Id DESC LIMIT 10 OFFSET ${offset}`);
-        const [count] = await pool.query("SELECT COUNT(Id) AS TotalCount FROM Users WHERE IsActive=1");
+        const [users] = await pool.query<UserDTO[]>(`SELECT Id,UserName,Name,DOB,Gender,MobileNo,Address,ProfilePicUrl FROM Users WHERE IsActive=1 AND (UserName LIKE '%${searchQuery}%' OR Gender LIKE '%${searchQuery}%' OR Name LIKE '%${searchQuery}%') ORDER BY Id DESC LIMIT 10 OFFSET ${offset}`);
+        const [count] = await pool.query(`SELECT COUNT(Id) AS TotalCount FROM Users WHERE IsActive=1 AND (UserName LIKE '%${searchQuery}%' OR Gender LIKE '%${searchQuery}%' OR Name LIKE '%${searchQuery}%')`);
 
 
         const updatedUsers = users.map((user)=>{

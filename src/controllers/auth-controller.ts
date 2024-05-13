@@ -34,7 +34,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         res.clearCookie(COOKIE_NAME, {
             httpOnly: true,
             signed: true,
-            domain: "carnot-users-dashboard-client.vercel.app",
             path: "/"
         });
 
@@ -44,7 +43,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
         res.cookie(COOKIE_NAME, token, {
             path: "/",
-            domain: "carnot-users-dashboard-client.vercel.app",
             expires,
             httpOnly: true,
             signed: true
@@ -76,7 +74,6 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
         res.clearCookie(COOKIE_NAME, {
             httpOnly: true,
             signed: true,
-            domain: "localhost",
             path: "/"
         });
 
@@ -88,7 +85,6 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
             path: "/",
             httpOnly: true,
             signed: true,
-            domain: "localhost",
             expires
         });
 
@@ -126,7 +122,6 @@ export const signOut = async (req: Request, res: Response, next: NextFunction) =
             if (users.length) {
                 res.clearCookie(COOKIE_NAME, {
                     httpOnly: true,
-                    domain: "localhost",
                     signed: true,
                     path: "/"
                 });
@@ -160,7 +155,6 @@ export const google = async (req: Request, res: Response, next: NextFunction) =>
 
             res.cookie(COOKIE_NAME, token, {
                 path: "/",
-                domain: "localhost",
                 expires,
                 httpOnly: true,
                 signed: true

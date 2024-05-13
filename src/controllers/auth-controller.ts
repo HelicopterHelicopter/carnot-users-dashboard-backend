@@ -35,6 +35,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             httpOnly: true,
             signed: true,
             path: "/",
+            secure:true,
             sameSite:'none'
         });
 
@@ -47,6 +48,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             expires,
             httpOnly: true,
             signed: true,
+            secure:true,
             sameSite:'none'
         });
 
@@ -77,6 +79,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
             httpOnly: true,
             signed: true,
             path: "/",
+            secure:true,
             sameSite:'none'
         });
 
@@ -89,6 +92,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
             httpOnly: true,
             signed: true,
             sameSite:'none',
+            secure:true,
             expires
         });
 
@@ -128,7 +132,8 @@ export const signOut = async (req: Request, res: Response, next: NextFunction) =
                     httpOnly: true,
                     signed: true,
                     path: "/",
-                    sameSite:'none'
+                    sameSite:'none',
+                    secure:true
                 });
 
                 return res.status(200).json({ message: "OK" });
@@ -163,6 +168,7 @@ export const google = async (req: Request, res: Response, next: NextFunction) =>
                 expires,
                 httpOnly: true,
                 signed: true,
+                secure:true,
                 sameSite:'none'
             });
 
@@ -183,7 +189,8 @@ export const google = async (req: Request, res: Response, next: NextFunction) =>
                 signed: true,
                 domain: "localhost",
                 path: "/",
-                sameSite:'none'
+                sameSite:'none',
+                secure:true
             });
     
             const token = createToken(userId, "7d");
@@ -195,6 +202,7 @@ export const google = async (req: Request, res: Response, next: NextFunction) =>
                 httpOnly: true,
                 signed: true,
                 domain: "localhost",
+                secure:true,
                 sameSite:'none',
                 expires
             });

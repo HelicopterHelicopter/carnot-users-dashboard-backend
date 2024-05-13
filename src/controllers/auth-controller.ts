@@ -44,7 +44,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
         res.cookie(COOKIE_NAME, token, {
             path: "/",
-            domain: "localhost",
+            domain: "carnot-users-dashboard-client.vercel.app",
             expires,
             httpOnly: true,
             signed: true

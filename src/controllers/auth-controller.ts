@@ -34,7 +34,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         res.clearCookie(COOKIE_NAME, {
             httpOnly: true,
             signed: true,
-            path: "/"
+            path: "/",
+            sameSite:'none'
         });
 
         const token = createToken(user.Id, "7d");
@@ -45,7 +46,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             path: "/",
             expires,
             httpOnly: true,
-            signed: true
+            signed: true,
+            sameSite:'none'
         });
 
         return res.status(200).json({ message: "OK", userDetails: { username: user.UserName, name: user.Name, dob: user.DOB, profilePic: user.ProfilePicUrl ?? process.env.DEFAULT_PROFILEPIC_URL, mobileNo: user.MobileNo, address: user.Address,email:user.Email } });
@@ -74,7 +76,8 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
         res.clearCookie(COOKIE_NAME, {
             httpOnly: true,
             signed: true,
-            path: "/"
+            path: "/",
+            sameSite:'none'
         });
 
         const token = createToken(userId, "7d");
@@ -85,6 +88,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
             path: "/",
             httpOnly: true,
             signed: true,
+            sameSite:'none',
             expires
         });
 
@@ -123,7 +127,8 @@ export const signOut = async (req: Request, res: Response, next: NextFunction) =
                 res.clearCookie(COOKIE_NAME, {
                     httpOnly: true,
                     signed: true,
-                    path: "/"
+                    path: "/",
+                    sameSite:'none'
                 });
 
                 return res.status(200).json({ message: "OK" });
@@ -157,7 +162,8 @@ export const google = async (req: Request, res: Response, next: NextFunction) =>
                 path: "/",
                 expires,
                 httpOnly: true,
-                signed: true
+                signed: true,
+                sameSite:'none'
             });
 
             return res.status(200).json({ message: "OK", userDetails: { username: user.UserName, name: user.Name, dob: user.DOB, gender:user.Gender,profilePic: user.ProfilePicUrl ?? process.env.DEFAULT_PROFILEPIC_URL, mobileNo: user.MobileNo, address: user.Address,email:user.Email } });
@@ -176,7 +182,8 @@ export const google = async (req: Request, res: Response, next: NextFunction) =>
                 httpOnly: true,
                 signed: true,
                 domain: "localhost",
-                path: "/"
+                path: "/",
+                sameSite:'none'
             });
     
             const token = createToken(userId, "7d");
@@ -188,6 +195,7 @@ export const google = async (req: Request, res: Response, next: NextFunction) =>
                 httpOnly: true,
                 signed: true,
                 domain: "localhost",
+                sameSite:'none',
                 expires
             });
 

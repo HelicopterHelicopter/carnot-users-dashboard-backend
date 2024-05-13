@@ -34,7 +34,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         res.clearCookie(COOKIE_NAME, {
             httpOnly: true,
             signed: true,
-            domain: "localhost",
+            domain: "carnot-users-dashboard-client.vercel.app",
             path: "/"
         });
 
